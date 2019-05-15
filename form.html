@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>To Do List</title>
+	<link rel="stylesheet" type="text/css" href="./static/styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans|Merriweather|Merriweather+Sans|Nunito|Nunito+Sans|Quattrocento|Quattrocento+Sans|Roboto|Roboto+Mono|Roboto+Slab" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <style>
+        body {
+            font-family: 'Merriweather Sans', sans-serif;
+            margin: 10px;
+            background-color: burlywood; /* For browsers that do not support gradients */
+            background-image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV6WjOA1UrPXpfehq0EogbcgxJ33l6Y1I6LCfW_8wvdRCHam0Q"
+                }
+        #container {
+            font-family: 'Roboto', sans-serif;
+            margin: 10px;
+                    }
+        #list {
+            font-family: 'Merriweather Sans', sans-serif;
+	    color: white;
+            font-size: 1.5em;
+            margin: 4px;
+        }
+	@import url(https://fonts.googleapis.com/css?family=Lato:900);
+	*, *:before, *:after{
+	box-sizing:border-box;
+	}
+	body{
+	font-family: 'Lato', sans-serif;
+	;
+	}
+	div.foo{
+	width: 90%;
+	margin: 0 auto;
+	text-align: center;
+	}
+	.letter{
+	display: inline-block;
+	font-weight: 900;
+	font-size: 3.5em;
+	margin: 0.2em;
+	position: relative;
+	color: #00B4F1;
+	transform-style: preserve-3d;
+	perspective: 400;
+	z-index: 1;
+	}
+	.letter:before, .letter:after{
+	position:absolute;
+	content: attr(data-letter);
+	transform-origin: top left;
+	top:0;
+	left:0;
+	}
+	.letter, .letter:before, .letter:after{
+	transition: all 0.3s ease-in-out;
+	}
+	.letter:before{
+	color: #fff;
+	text-shadow: 
+	-1px 0px 1px rgba(255,255,255,.8),
+	1px 0px 1px rgba(0,0,0,.8);
+	z-index: 3;
+	transform:
+	rotateX(0deg)
+	rotateY(-15deg)
+	rotateZ(0deg);
+	}
+	.letter:after{
+	color: rgba(0,0,0,.11);
+	z-index:2;
+	transform:
+	scale(1.08,1)
+	rotateX(0deg)
+	rotateY(0deg)
+	rotateZ(0deg)
+	skew(0deg,1deg);
+	}
+	.letter:hover:before{
+	color: #fafafa;
+	transform:
+	rotateX(0deg)
+	rotateY(-40deg)
+	rotateZ(0deg);
+	}
+	.letter:hover:after{
+	transform:
+	scale(1.08,1)
+	rotateX(0deg)
+	rotateY(40deg)
+	rotateZ(0deg)
+	skew(0deg,22deg);
+	}
+	</style>    
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+var app = angular.module('app', []); 
+
+app.controller('ctrl', function($scope, $http) {
+    $scope.counter = 0
+    $scope.todoList = {
+        content : [],
+    };
+    
+    $scope.init = function() {
+        var posting = $http({
+                    method: 'GET',
+                    url: '/display',
+                    params: $scope.todoList,
+                }).then (function (response) {
+                    response.data[0].content.forEach(function (x) {
+                    $scope.todoList.content.push(JSON.parse(x));
+                    });
+                    console.log($scope.todoList);
+
+                },function (error){
+					console.log(error);
+	});
+    };
+
+    $scope.init();
+
+    $scope.todoAdd = function() {
+        if($scope.todoInput != null) {    
+	    $scope.counter += 1
+            $scope.todoList.content.push({todoText: $scope.todoInput, done: false});
+	    console.log(JSON.stringify($scope.todoList));
+            var posting = $http({
+                    method: 'GET',
+                    url: '/addNew',
+                    params: $scope.todoList,
+                }).then (function (response) {
+                },function (error){
+			console.log(error);
+	});
+        $scope.todoInput = "";
+        }    
+    };
+
+    $scope.remove = function() {
+        var oldList = $scope.todoList.content;
+        $scope.todoList.content = [];
+        $scope.counter = 0
+        angular.forEach(oldList, function(x) {
+            if (!x.done) {
+		$scope.todoList.content.push(x);
+		$scope.counter += 1
+		}
+        });
+	var posting = $http({
+                method: 'GET',
+                    url: '/addNew',
+                    params: $scope.todoList,
+                }).then (function (response) {
+                },function (error){
+			console.log(error);
+	});
+    };
+});
+</script>
+<body ng-app = "app" ng-controller = "ctrl" background = "https://static-s.aa-cdn.net/img/gp/20600004571690/8JPziRYod95S-0nJrncI8e_BFDzvXAPEWPh3jdQdVQ1bTW-MKe0qDCxSk46UTYhSi_Y=h900">
+<center>
+
+<div class="foo">
+  <span class="letter" data-letter="T">T</span>
+  <span class="letter" data-letter="O">O</span>
+  <span class="letter" data-letter="D">D</span>
+  <span class="letter" data-letter="O">O</span><br>
+  <span class="letter" data-letter="L">L</span>
+  <span class="letter" data-letter="I">I</span>
+  <span class="letter" data-letter="S">S</span>
+  <span class="letter" data-letter="T">T</span>
+</div>
+
+<div id="container">
+<input class="form-control form-control-sm" style="width: 40%" type = "text" ng-model = "todoInput" size = "50" placeholder = "Add New"><br>
+<button class="btn btn-primary" ng-click = "todoAdd()">Add</button><br>
+<br>
+<div class="form-check" id="list">
+<strong>
+Number of items: {{counter}}<br>
+<div ng-repeat = "x in todoList.content">
+    <div ng-if = "x.done == false"><input class="form-check-input" id="defaultCheck1" type = "checkbox" ng-model = "x.done"><span ng-bind = "x.todoText"></span></div>
+    <div ng-if = "x.done"><strike><input class="form-check-input" id="defaultCheck1" type = "checkbox" ng-model = "x.done"><span ng-bind = "x.todoText"></span></strike></div>
+</div>
+</strong>
+</div>
+<br>
+<p><button class="btn btn-danger" ng-click = "remove()">Remove marked</button></p>
+</div>
+</center>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>
